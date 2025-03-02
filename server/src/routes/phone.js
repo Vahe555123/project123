@@ -10,6 +10,8 @@ router.post('/', async (req, res) => {
     if (!req.files || !req.files.image) {
       return res.status(400).json({ message: 'Image file is required' });
     }
+    console.log(req.files);
+    
     const image = req.files.image;
     const updateImage = Date.now() + image.name
     const uploadPath = path.join(path.resolve(), '/uploads', updateImage);

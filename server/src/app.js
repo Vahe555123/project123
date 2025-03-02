@@ -28,6 +28,7 @@ mongoose
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/phone', require('./routes/phone'));
 app.use('/api/basket', require('./routes/basket'));
+app.use('/api/review', require('./routes/review'));
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);

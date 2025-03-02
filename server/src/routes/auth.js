@@ -32,8 +32,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-
-
 router.post('/verify', async (req, res) => {
   const { email, code } = req.body;
   const user = await UserModel.findOne({ email });
@@ -73,6 +71,35 @@ router.post('/login/admin', async (req, res) => {
 router.get("/profile/admin", authMiddleware, async (req, res) => {
   console.log(req.user);
   res.status(200).json({ login: req.user.userId })
+})
+
+router.put("/forgot-password", async (req, res) => {
+  const { email } = req.body
+  const user = await UserModel.findOne({ email });
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  user.resetCode = resetCode;
+  await user.save();
+  await transporter.sendMail({
+    to: email,
+    subject: 'reset password',
+    text: resetCode
+  });
+  res.status(200).json({ message: 'check your email' })
+})
+
+router.put("/forgot-password-check", async (req, res) => {
+  const { email, resetCode , password } = req.body
+  const user = await UserModel.findOne({ email });
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  if (user.resetCode !== resetCode) {
+    return res.status(400).json({ message: 'invalid reset code' })
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword
+  user.resetCode = null
+  await user.save();
+  res.status(200).json({ message: 'success' })
 })
 
 router.get('/profile', authMiddleware, async (req, res) => {

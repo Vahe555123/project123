@@ -23,7 +23,7 @@ export const LoginPage = () => {
     }
     return(
         <>
-            <h1>login</h1>
+            <h1>login page</h1>
             <input name="login" onChange={handleChange}/>
             <input name="password" onChange={handleChange}/>
             <button onClick={login}>login</button>
